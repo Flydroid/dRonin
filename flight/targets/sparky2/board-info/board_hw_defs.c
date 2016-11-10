@@ -5,7 +5,7 @@
  * @addtogroup Sparky2 Tau Labs Sparky2 support files
  * @{
  *
- * @file       pios_board.c 
+ * @file       pios_board.c
  * @author     Tau Labs, http://taulabs.org, Copyright (C) 2012-2015
  * @author     dRonin, http://dronin.org Copyright (C) 2015-2016
  * @brief      Board specific hardware configuration file
@@ -92,7 +92,7 @@ const struct pios_annunc_cfg * PIOS_BOARD_HW_DEFS_GetLedCfg (uint32_t board_revi
 #if defined(PIOS_INCLUDE_SPI)
 #include <pios_spi_priv.h>
 
-/* 
+/*
  * SPI1 Interface
  * Used for MPU9250 gyro, accelerometer and mag
  */
@@ -202,7 +202,7 @@ static const struct pios_spi_cfg pios_spi_telem_flash_cfg = {
 		},
 	},
 	.slave_count = 2,
-	.ssel = { 
+	.ssel = {
 		{      // RFM22b
 		.gpio = GPIOA,
 		.init = {
@@ -675,6 +675,43 @@ static const struct pios_usart_cfg pios_usart_main_cfg = {
 		.gpio = GPIOA,
 		.init = {
 			.GPIO_Pin   = GPIO_Pin_9,
+			.GPIO_Speed = GPIO_Speed_2MHz,
+			.GPIO_Mode  = GPIO_Mode_AF,
+			.GPIO_OType = GPIO_OType_PP,
+			.GPIO_PuPd  = GPIO_PuPd_UP
+		},
+	},
+};
+
+
+/*
+ * Extra UART
+ */
+static const struct pios_usart_cfg pios_extra_usart_cfg = {
+	.regs = UART4,
+	.remap = GPIO_AF_UART4,
+	.irq = {
+		.init = {
+			.NVIC_IRQChannel = UART4_IRQn,
+			.NVIC_IRQChannelPreemptionPriority = PIOS_IRQ_PRIO_MID,
+			.NVIC_IRQChannelSubPriority = 0,
+			.NVIC_IRQChannelCmd = ENABLE,
+		},
+	},
+	.rx = {
+		.gpio = GPIOA,
+		.init = {
+			.GPIO_Pin   = GPIO_Pin_1,
+			.GPIO_Speed = GPIO_Speed_2MHz,
+			.GPIO_Mode  = GPIO_Mode_AF,
+			.GPIO_OType = GPIO_OType_PP,
+			.GPIO_PuPd  = GPIO_PuPd_UP
+		},
+	},
+	.tx = {
+		.gpio = GPIOA,
+		.init = {
+			.GPIO_Pin   = GPIO_Pin_0,
 			.GPIO_Speed = GPIO_Speed_2MHz,
 			.GPIO_Mode  = GPIO_Mode_AF,
 			.GPIO_OType = GPIO_OType_PP,
@@ -1539,16 +1576,16 @@ struct pios_can_cfg pios_can_cfg = {
 	.init = {
 		// To make it easy to use both F3 and F4 use the other APB1 bus rate
 		// divided by 2. This matches the baud rate across devices
-  		.CAN_Prescaler = 21-1,   /*!< Specifies the length of a time quantum. 
+  		.CAN_Prescaler = 21-1,   /*!< Specifies the length of a time quantum.
                                  It ranges from 1 to 1024. */
   		.CAN_Mode = CAN_Mode_Normal,         /*!< Specifies the CAN operating mode.
                                  This parameter can be a value of @ref CAN_operating_mode */
-  		.CAN_SJW = CAN_SJW_1tq,          /*!< Specifies the maximum number of time quanta 
-                                 the CAN hardware is allowed to lengthen or 
+  		.CAN_SJW = CAN_SJW_1tq,          /*!< Specifies the maximum number of time quanta
+                                 the CAN hardware is allowed to lengthen or
                                  shorten a bit to perform resynchronization.
                                  This parameter can be a value of @ref CAN_synchronisation_jump_width */
-  		.CAN_BS1 = CAN_BS1_9tq,          /*!< Specifies the number of time quanta in Bit 
-                                 Segment 1. This parameter can be a value of 
+  		.CAN_BS1 = CAN_BS1_9tq,          /*!< Specifies the number of time quanta in Bit
+                                 Segment 1. This parameter can be a value of
                                  @ref CAN_time_quantum_in_bit_segment_1 */
   		.CAN_BS2 = CAN_BS2_8tq,          /*!< Specifies the number of time quanta in Bit Segment 2.
                                  This parameter can be a value of @ref CAN_time_quantum_in_bit_segment_2 */
@@ -1556,7 +1593,7 @@ struct pios_can_cfg pios_can_cfg = {
                                 This parameter can be set either to ENABLE or DISABLE. */
   		.CAN_ABOM = DISABLE,  /*!< Enable or disable the automatic bus-off management.
                                   This parameter can be set either to ENABLE or DISABLE. */
-  		.CAN_AWUM = DISABLE,  /*!< Enable or disable the automatic wake-up mode. 
+  		.CAN_AWUM = DISABLE,  /*!< Enable or disable the automatic wake-up mode.
                                   This parameter can be set either to ENABLE or DISABLE. */
   		.CAN_NART = ENABLE,  /*!< Enable or disable the non-automatic retransmission mode.
                                   This parameter can be set either to ENABLE or DISABLE. */

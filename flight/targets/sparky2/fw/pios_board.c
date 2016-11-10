@@ -5,33 +5,33 @@
  * @addtogroup Sparky2 Tau Labs Sparky2 support files
  * @{
  *
- * @file       pios_board.c 
+ * @file       pios_board.c
  * @author     Tau Labs, http://taulabs.org, Copyright (C) 2012-2015
  * @author     dRonin, http://dronin.org Copyright (C) 2015
  * @brief      Board initialization file
  * @see        The GNU Public License (GPL) Version 3
- * 
+ *
  *****************************************************************************/
-/* 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 3 of the License, or 
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
- * with this program; if not, write to the Free Software Foundation, Inc., 
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 /* Pull in the board-specific static HW definitions.
  * Including .c files is a bit ugly but this allows all of
  * the HW definitions to be const and static to limit their
- * scope.  
+ * scope.
  *
  * NOTE: THIS IS THE ONLY PLACE THAT SHOULD EVER INCLUDE THIS FILE
  */
@@ -50,7 +50,7 @@
 #include <pios_openlrs_rcvr_priv.h>
 
 /**
- * Sensor configurations 
+ * Sensor configurations
  */
 
 /**
@@ -375,7 +375,7 @@ void PIOS_Board_Init(void) {
 	PIOS_Assert(led_cfg);
 	PIOS_ANNUNC_Init(led_cfg);
 #endif	/* PIOS_INCLUDE_ANNUNC */
-	
+
 	uint32_t pios_spi_gyro_id;
 
 	/* Set up the SPI interface to the gyro/acelerometer */
@@ -530,22 +530,38 @@ void PIOS_Board_Init(void) {
 	/* Configure IO ports */
 	HwSparky2DSMxModeOptions hw_DSMxMode;
 	HwSparky2DSMxModeGet(&hw_DSMxMode);
-	
+
 	/* Configure main USART port */
 	uint8_t hw_mainport;
 	HwSparky2MainPortGet(&hw_mainport);
 
 	PIOS_HAL_ConfigurePort(hw_mainport,          // port type protocol
 			&pios_usart_main_cfg,                // usart_port_cfg
-			&pios_usart_com_driver,              // com_driver 
-			NULL,                                // i2c_id 
-			NULL,                                // i2c_cfg 
-			NULL,                                // i2c_cfg 
+			&pios_usart_com_driver,              // com_driver
+			NULL,                                // i2c_id
+			NULL,                                // i2c_cfg
+			NULL,                                // i2c_cfg
 			NULL,                                // pwm_cfg
 			PIOS_LED_ALARM,                      // led_id
 			&pios_dsm_main_cfg,                  // dsm_cfg
-			hw_DSMxMode,                         // dsm_mode 
+			hw_DSMxMode,                         // dsm_mode
 			NULL);                               // sbus_cfg
+
+		/* Configure Extra USART port */
+		uint8_t hw_extraport;
+		HwSparky2MainPortGet(&hw_extraport);
+
+		PIOS_HAL_ConfigurePort(hw_mainport,          // port type protocol
+				&pios_extra_usart_cfg,                // usart_port_cfg
+				&pios_usart_com_driver,              // com_driver
+				NULL,                                // i2c_id
+				NULL,                                // i2c_cfg
+				NULL,                                // i2c_cfg
+				NULL,                                // pwm_cfg
+				PIOS_LED_ALARM,                      // led_id
+				&pios_dsm_main_cfg,                  // dsm_cfg
+				hw_DSMxMode,                         // dsm_mode
+				NULL);
 
 	/* Configure FlexiPort */
 	uint8_t hw_flexiport;
@@ -555,12 +571,12 @@ void PIOS_Board_Init(void) {
 			&pios_usart_flexi_cfg,               // usart_port_cfg
 			&pios_usart_com_driver,              // com_driver
 			&pios_i2c_flexiport_adapter_id,      // i2c_id
-			&pios_i2c_flexiport_adapter_cfg,     // i2c_cfg 
-			NULL,                                // i2c_cfg 
+			&pios_i2c_flexiport_adapter_cfg,     // i2c_cfg
+			NULL,                                // i2c_cfg
 			NULL,                                // pwm_cfg
 			PIOS_LED_ALARM,                      // led_id
 			&pios_dsm_flexi_cfg,                 // dsm_cfg
-			hw_DSMxMode,                         // dsm_mode 
+			hw_DSMxMode,                         // dsm_mode
 			NULL);                               // sbus_cfg
 
 #if defined(PIOS_INCLUDE_RFM22B)
@@ -618,7 +634,7 @@ void PIOS_Board_Init(void) {
 #else
 	PIOS_DEBUG_Init(&pios_tim_servo_all_channels, NELEMENTS(pios_tim_servo_all_channels));
 #endif
-	
+
 	if (PIOS_I2C_Init(&pios_i2c_mag_pressure_adapter_id, &pios_i2c_mag_pressure_adapter_cfg)) {
 		PIOS_DEBUG_Assert(0);
 	}
@@ -804,4 +820,3 @@ void PIOS_Board_Init(void) {
  * @}
  * @}
  */
-
