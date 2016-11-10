@@ -683,42 +683,44 @@ static const struct pios_usart_cfg pios_usart_main_cfg = {
 	},
 };
 
-
 /*
  * Extra UART
  */
-static const struct pios_usart_cfg pios_extra_usart_cfg = {
-	.regs = UART4,
-	.remap = GPIO_AF_UART4,
-	.irq = {
-		.init = {
-			.NVIC_IRQChannel = UART4_IRQn,
-			.NVIC_IRQChannelPreemptionPriority = PIOS_IRQ_PRIO_MID,
-			.NVIC_IRQChannelSubPriority = 0,
-			.NVIC_IRQChannelCmd = ENABLE,
+if(board_revision == SPARKY2_V2_0_EXTRA_SERIAL)
+{
+	static const struct pios_usart_cfg pios_extra_usart_cfg = {
+		.regs = UART4,
+		.remap = GPIO_AF_UART4,
+		.irq = {
+			.init = {
+				.NVIC_IRQChannel = UART4_IRQn,
+				.NVIC_IRQChannelPreemptionPriority = PIOS_IRQ_PRIO_MID,
+				.NVIC_IRQChannelSubPriority = 0,
+				.NVIC_IRQChannelCmd = ENABLE,
+			},
 		},
-	},
-	.rx = {
-		.gpio = GPIOA,
-		.init = {
-			.GPIO_Pin   = GPIO_Pin_1,
-			.GPIO_Speed = GPIO_Speed_2MHz,
-			.GPIO_Mode  = GPIO_Mode_AF,
-			.GPIO_OType = GPIO_OType_PP,
-			.GPIO_PuPd  = GPIO_PuPd_UP
+		.rx = {
+			.gpio = GPIOA,
+			.init = {
+				.GPIO_Pin   = GPIO_Pin_1,
+				.GPIO_Speed = GPIO_Speed_2MHz,
+				.GPIO_Mode  = GPIO_Mode_AF,
+				.GPIO_OType = GPIO_OType_PP,
+				.GPIO_PuPd  = GPIO_PuPd_UP
+			},
 		},
-	},
-	.tx = {
-		.gpio = GPIOA,
-		.init = {
-			.GPIO_Pin   = GPIO_Pin_0,
-			.GPIO_Speed = GPIO_Speed_2MHz,
-			.GPIO_Mode  = GPIO_Mode_AF,
-			.GPIO_OType = GPIO_OType_PP,
-			.GPIO_PuPd  = GPIO_PuPd_UP
+		.tx = {
+			.gpio = GPIOA,
+			.init = {
+				.GPIO_Pin   = GPIO_Pin_0,
+				.GPIO_Speed = GPIO_Speed_2MHz,
+				.GPIO_Mode  = GPIO_Mode_AF,
+				.GPIO_OType = GPIO_OType_PP,
+				.GPIO_PuPd  = GPIO_PuPd_UP
+			},
 		},
-	},
-};
+	};
+}
 #endif /* PIOS_INCLUDE_COM_TELEM */
 
 static const struct pios_usart_cfg pios_usart_rcvr_pc7_cfg = {
@@ -1258,39 +1260,41 @@ static const struct pios_tim_channel pios_tim_servoport_all_pins[] = {
 		},
 		.remap = GPIO_AF_TIM9,
 	},
+	if (board_revision != SPARKY2_V2_0_EXTRA_SERIAL) 	//added check for SPARKY2_V2_0_EXTRA_SERIAL Board revision
 	{
-		.timer = TIM5,
-		.timer_chan = TIM_Channel_2,
-		.pin = {
-			.gpio = GPIOA,
-			.init = {
-				.GPIO_Pin = GPIO_Pin_1,
-				.GPIO_Speed = GPIO_Speed_2MHz,
-				.GPIO_Mode  = GPIO_Mode_AF,
-				.GPIO_OType = GPIO_OType_PP,
-				.GPIO_PuPd  = GPIO_PuPd_DOWN
+		{
+			.timer = TIM5,
+			.timer_chan = TIM_Channel_2,
+			.pin = {
+				.gpio = GPIOA,
+				.init = {
+					.GPIO_Pin = GPIO_Pin_1,
+					.GPIO_Speed = GPIO_Speed_2MHz,
+					.GPIO_Mode  = GPIO_Mode_AF,
+					.GPIO_OType = GPIO_OType_PP,
+					.GPIO_PuPd  = GPIO_PuPd_DOWN
+				},
+				.pin_source = GPIO_PinSource1,
 			},
-			.pin_source = GPIO_PinSource1,
+			.remap = GPIO_AF_TIM5,
 		},
-		.remap = GPIO_AF_TIM5,
-	},
-	{
-		.timer = TIM5,
-		.timer_chan = TIM_Channel_1,
-		.pin = {
-			.gpio = GPIOA,
-			.init = {
-				.GPIO_Pin = GPIO_Pin_0,
-				.GPIO_Speed = GPIO_Speed_2MHz,
-				.GPIO_Mode  = GPIO_Mode_AF,
-				.GPIO_OType = GPIO_OType_PP,
-				.GPIO_PuPd  = GPIO_PuPd_DOWN
+		{
+			.timer = TIM5,
+			.timer_chan = TIM_Channel_1,
+			.pin = {
+				.gpio = GPIOA,
+				.init = {
+					.GPIO_Pin = GPIO_Pin_0,
+					.GPIO_Speed = GPIO_Speed_2MHz,
+					.GPIO_Mode  = GPIO_Mode_AF,
+					.GPIO_OType = GPIO_OType_PP,
+					.GPIO_PuPd  = GPIO_PuPd_DOWN
+				},
+				.pin_source = GPIO_PinSource0,
 			},
-			.pin_source = GPIO_PinSource0,
+			.remap = GPIO_AF_TIM5,
 		},
-		.remap = GPIO_AF_TIM5,
-	},
-
+	}
 	// Outputs below are buffered via output transmitter. This will make them inverterd.
 	{
 		.timer = TIM8,
@@ -1372,7 +1376,7 @@ const struct pios_servo_cfg pios_servo_cfg = {
 		.TIM_OCNIdleState = TIM_OCNIdleState_Reset,
 	},
 	.channels = pios_tim_servoport_all_pins,
-	.num_channels = NELEMENTS(pios_tim_servoport_all_pins),
+	.num_channels = NELEMENTS(pios_tim_servoport_all_pins), 		//this should be 8, because ServoOut5 and ServoOut6 have been commeted out
 };
 
 //! Brushed Sparky skips last two output ports

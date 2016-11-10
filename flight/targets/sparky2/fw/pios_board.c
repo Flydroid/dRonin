@@ -548,6 +548,8 @@ void PIOS_Board_Init(void) {
 			NULL);                               // sbus_cfg
 
 		/* Configure Extra USART port */
+	if(board_revision == SPARKY2_V2_0_EXTRA_SERIAL)
+	{
 		uint8_t hw_extraport;
 		HwSparky2MainPortGet(&hw_extraport);
 
@@ -562,7 +564,7 @@ void PIOS_Board_Init(void) {
 				&pios_dsm_main_cfg,                  // dsm_cfg
 				hw_DSMxMode,                         // dsm_mode
 				NULL);
-
+  }
 	/* Configure FlexiPort */
 	uint8_t hw_flexiport;
 	HwSparky2FlexiPortGet(&hw_flexiport);
